@@ -1,26 +1,28 @@
-import { renderTasks } from './modules/renderTasks.js'
-import { tasks } from './modules/tasks.js'
+import { renderTasks } from './modules/renderTasks.js';
+import { tasks, fetchTasks, addTaskToAPI } from './modules/tasks.js';
 
-renderTasks()
+document.addEventListener('DOMContentLoaded', () => {
+    fetchTasks().then(() => renderTasks());
+});
 
-const button = document.getElementById('add')
-const input = document.getElementById('field')
+const button = document.getElementById('add');
+const input = document.getElementById('field');
 
 button.addEventListener('click', () => {
-    input.classList.remove('error')
+    input.classList.remove('error');
 
     if (input.value === '') {
-        input.classList.add('error')
-        return
+        input.classList.add('error');
+        return;
     }
 
     const newTask = {
         text: input.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-    }
+    };
 
-    tasks.push(newTask)
+    addTaskToAPI(newTask.text).then(() => {
+        return fetchTasks();
+    }).then(() => renderTasks());
 
-    input.value = ''
-
-    renderTasks()
-})
+    input.value = '';
+});
